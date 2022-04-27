@@ -1,13 +1,25 @@
 import './comment.css'
 import { React } from 'react'
 import PropTypes from 'prop-types'
-import Reply from '../Reply/Reply'
+import Replies from '../Replies/Replies'
 
-const Comment = ({ info, setComments }) => {
-  const upScore = () => {
-    setComments(prev => prev.map(comment => comment.id !== info.id ? comment : { ...comment, score: comment.score + 1 }))
+const Comment = ({ info, setComments, upScore }) => {
+  //  Handle Upvote in Replies
+  const replyUpScore = (parentId, replyId) => {
+    setComments(prevComments => {
+      return prevComments.map(comment => {
+        if (comment.id !== parentId) {
+          return comment
+        } else {
+          const updatedReplies = comment.replies.map(reply => reply.id !== replyId ? reply : { ...reply, score: reply.score + 1 })
+          return {
+            ...comment,
+            replies: updatedReplies
+          }
+        }
+      })
+    })
   }
-
   return (
     <>
       <article className='comment'>
@@ -28,14 +40,16 @@ const Comment = ({ info, setComments }) => {
               </footer>
           </div>
       </article>
-      { info.replies.map(reply => <Reply key={reply.id} info={reply} parentId={info.id} setComments={setComments}/>) }
+      {/* { info.replies.map(reply => <Reply key={reply.id} info={reply} parentId={info.id} setComments={setComments}/>) } */}
+      <Replies replies={info.replies} replyUpScore={replyUpScore} parentId={info.id}/>
     </>
   )
 }
 
 Comment.propTypes = {
   info: PropTypes.object,
-  setComments: PropTypes.func
+  setComments: PropTypes.func,
+  upScore: PropTypes.func
 }
 
 export default Comment

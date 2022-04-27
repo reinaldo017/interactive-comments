@@ -66,6 +66,10 @@ function App () {
     setNewComment(target.value)
   }
 
+  const upScore = (id) => {
+    setComments(prev => prev.map(comment => comment.id !== id ? comment : { ...comment, score: comment.score + 1 }))
+  }
+
   return (
     <div className="App">
       {comments.map(comment => {
@@ -74,6 +78,7 @@ function App () {
             key={comment.id}
             info={comment}
             setComments={setComments}
+            upScore={() => { upScore(comment.id) }}
           />
         )
       })}
