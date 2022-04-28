@@ -1,19 +1,19 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-const Score = ({ score, handleUpvote, handleDownvote }) => {
+const Score = ({ score, onClick }) => {
   return (
         <div>
-            <button onClick={handleUpvote}> + </button>
+            <button onClick={onClick}> + </button>
             <div>{score}</div>
-            <button onClick={handleDownvote}>-</button>
+            <button onClick={onClick}>-</button>
         </div>
   )
 }
 
 Score.propTypes = {
   score: PropTypes.number,
-  handleUpvote: PropTypes.func,
+  onClick: PropTypes.func,
   handleDownvote: PropTypes.func
 }
 

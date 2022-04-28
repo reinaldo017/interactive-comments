@@ -11,7 +11,7 @@ const currentUser = {
 
 function App () {
   //  ***States**
-  //   Comentario a renderizar
+  //   Coments to render
   const [comments, setComments] = useState([
     {
       id: 2,
@@ -66,8 +66,30 @@ function App () {
     setNewComment(target.value)
   }
 
-  const upScore = (id) => {
-    setComments(prev => prev.map(comment => comment.id !== id ? comment : { ...comment, score: comment.score + 1 }))
+  const vote = (commentId, action) => {
+    setComments(prev => prev.map(prevComment =>
+      prevComment.id !== commentId
+        ? prevComment
+        : {
+            ...prevComment,
+            score: action === '+' ? prevComment.score + 1 : prevComment.score - 1
+          })
+    )
+  }
+
+  const voteReply = (mainCommentId, replyId, action) => {
+    setComments(prev => prev.map(comment => {
+      if (comment.id !== mainCommentId) {
+        return comment
+      } else {
+        const updatedReplies = comment.replies.map(reply => reply.id !== replyId ? reply : { ...reply, score: action === '+' ? reply.score + 1 : reply.score - 1 })
+        return {
+          ...comment,
+          replies: updatedReplies
+        }
+      }
+    })
+    )
   }
 
   return (
@@ -77,12 +99,11 @@ function App () {
           <Comment
             key={comment.id}
             info={comment}
-            setComments={setComments}
-            upScore={() => { upScore(comment.id) }}
+            vote={vote}
+            voteReply={voteReply}
           />
         )
       })}
-
       <NewComment currentUser={currentUser} content={newComment} onChange={handleNewComment}/>
     </div>
   )

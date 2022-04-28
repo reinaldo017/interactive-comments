@@ -2,19 +2,20 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Comment from '../Comment/Comment'
 
-const Replies = ({ replies = null, replyUpScore, parentId }) => {
+const Replies = ({ replies = null, voteReply, mainCommentId }) => {
   if (replies === null) {
     return null
   } else {
     return (
-      replies.map(reply => <Comment key={reply.id} info={reply} upScore={() => { replyUpScore(parentId, reply.id) }} />)
+      replies.map(reply => <Comment key={reply.id} info={reply} vote={(commentId, action) => { voteReply(mainCommentId, reply.id, action) }} />)
     )
   }
 }
 
 Replies.propTypes = {
   replies: PropTypes.array,
-  replyUpscore: PropTypes.func
+  upvoteReply: PropTypes.func,
+  mainCommentId: PropTypes.number
 }
 
 export default Replies
