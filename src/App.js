@@ -3,6 +3,7 @@ import Comment from './Components/Comment/Comment'
 import NewComment from './Components/NewComment/NewComment'
 // import image from './images/avatars/image-amyrobson.png'
 import currentUserImage from './images/avatars/image-juliusomo.png'
+import { updateReplyScore } from './helpers'
 
 const currentUser = {
   name: 'Reinaldo017',
@@ -67,14 +68,16 @@ function App () {
   }
 
   const vote = (commentId, action) => {
-    setComments(prev => prev.map(prevComment =>
-      prevComment.id !== commentId
-        ? prevComment
-        : {
-            ...prevComment,
-            score: action === '+' ? prevComment.score + 1 : prevComment.score - 1
-          })
-    )
+    setComments(prevComments => prevComments.map(prevComment => {
+      if (prevComment.id !== commentId) {
+        return prevComment
+      } else {
+        return {
+          ...prevComment,
+          score: action === '+' ? prevComment.score + 1 : prevComment.score - 1
+        }
+      }
+    }))
   }
 
   const voteReply = (mainCommentId, replyId, action) => {
@@ -82,14 +85,12 @@ function App () {
       if (comment.id !== mainCommentId) {
         return comment
       } else {
-        const updatedReplies = comment.replies.map(reply => reply.id !== replyId ? reply : { ...reply, score: action === '+' ? reply.score + 1 : reply.score - 1 })
         return {
           ...comment,
-          replies: updatedReplies
+          replies: updateReplyScore(comment, replyId, action)
         }
       }
-    })
-    )
+    }))
   }
 
   return (

@@ -2,32 +2,24 @@ import './comment.css'
 import React from 'react'
 import PropTypes from 'prop-types'
 import Replies from '../Replies/Replies'
+import { getOtherButton } from '../../helpers'
 
 const Comment = ({ info, voteReply, vote }) => {
-  const getOtherButton = (buttonToIgnore) => {
-    //  Se crea un arreglo con los botones de Score
-    const scoreElement = buttonToIgnore.parentElement
-    const buttons = scoreElement.getElementsByTagName('button')
-    //  Se busca y se retorna el botón opuesto al seleccionado
-    for (let i = 0; i < 2; i++) {
-      if (buttons[i] !== buttonToIgnore) {
-        return buttons[i]
-      }
-    }
-  }
-
   const onClick = ({ target }) => {
     const button = target
     const otherButton = getOtherButton(button)
 
+    // Si ningún botón ha sido clickeado
     if (button.dataset.clicked === 'false' && otherButton.dataset.clicked === 'false') {
       vote(info.id, button.innerText)
       button.dataset.clicked = 'true'
     } else if (button.dataset.clicked === 'true' && otherButton.dataset.clicked === 'false') {
+      //  Si se clickea un botón antes clickeado
       const action = target.innerText === '+' ? '-' : '+'
       vote(info.id, action)
       button.dataset.clicked = 'false'
     } else if (button.dataset.clicked === 'false' && otherButton.dataset.clicked === 'true') {
+      // Si el otro botón ha sido clickeado antes
       vote(info.id, button.innerText)
       vote(info.id, button.innerText)
       button.dataset.clicked = 'true'
