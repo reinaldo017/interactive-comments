@@ -7,7 +7,13 @@ const Replies = ({ replies = null, voteReply, mainCommentId }) => {
     return null
   } else {
     return (
-      replies.map(reply => <Comment key={reply.id} info={reply} vote={(commentId, action) => { voteReply(mainCommentId, reply.id, action) }} />)
+      replies.map(reply =>
+      <Comment
+        key={reply.id}
+        info={reply}
+        replyingTo={reply.replyingTo}
+        vote={(commentId, action) => { voteReply(mainCommentId, reply.id, action) }}
+      />)
     )
   }
 }

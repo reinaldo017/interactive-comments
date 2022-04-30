@@ -3,10 +3,10 @@ import Comment from './Components/Comment/Comment'
 import NewComment from './Components/NewComment/NewComment'
 // import image from './images/avatars/image-amyrobson.png'
 import currentUserImage from './images/avatars/image-juliusomo.png'
-import { updateReplyScore } from './helpers'
+import { updateReplyScore, updateScore } from './helpers'
 
 const currentUser = {
-  name: 'Reinaldo017',
+  username: 'Reinaldo017',
   image: currentUserImage
 }
 
@@ -59,14 +59,7 @@ function App () {
     }
   ])
 
-  //  New Comment content
-  const [newComment, setNewComment] = useState('')
-
   // ***Handlers***
-  const handleNewComment = ({ target }) => {
-    setNewComment(target.value)
-  }
-
   const vote = (commentId, action) => {
     setComments(prevComments => prevComments.map(prevComment => {
       if (prevComment.id !== commentId) {
@@ -74,7 +67,7 @@ function App () {
       } else {
         return {
           ...prevComment,
-          score: action === '+' ? prevComment.score + 1 : prevComment.score - 1
+          score: updateScore(prevComment, action)
         }
       }
     }))
@@ -93,6 +86,25 @@ function App () {
     }))
   }
 
+  const addComment = (comment, replyingTo) => {
+    if (replyingTo === null) {
+      // Add To Main Comments
+      setComments(prev => [...prev, comment])
+    } else {
+      //  Add to replies of specified comment
+      setComments(prev => prev.map(prevComment => {
+        if (prevComment.user.username !== replyingTo) {
+          return prevComment
+        } else {
+          return {
+            ...prevComment,
+            replies: [...prevComment.replies, comment]
+          }
+        }
+      }))
+    }
+  }
+
   return (
     <div className="App">
       {comments.map(comment => {
@@ -102,10 +114,12 @@ function App () {
             info={comment}
             vote={vote}
             voteReply={voteReply}
+            addComment={addComment}
+            currentUser={currentUser}
           />
         )
       })}
-      <NewComment currentUser={currentUser} content={newComment} onChange={handleNewComment}/>
+      <NewComment currentUser={currentUser} addComment={addComment}/>
     </div>
   )
 }

@@ -1,11 +1,18 @@
 import './comment.css'
-import React from 'react'
+import { useState, React } from 'react'
 import PropTypes from 'prop-types'
 import Replies from '../Replies/Replies'
+import NewComment from '../NewComment/NewComment'
 import { getOtherButton } from '../../helpers'
 
-const Comment = ({ info, voteReply, vote }) => {
-  const onClick = ({ target }) => {
+const Comment = ({ info, voteReply, vote, replyingTo = null, addComment, currentUser }) => {
+  const [newReply, setNewReply] = useState(false)
+
+  const handleNewReply = (event) => {
+    setNewReply(prev => !prev)
+  }
+
+  const handleVote = ({ target }) => {
     const button = target
     const otherButton = getOtherButton(button)
 
@@ -36,17 +43,21 @@ const Comment = ({ info, voteReply, vote }) => {
                   <h3 className='username'>{info.user.username}</h3>
                   <p className='time'>{info.createdAt}</p>
               </header>
-              <p className='comment__body'>{info.content}</p>
+              <p className='comment__body'>
+                { replyingTo !== null && <span>{replyingTo + ' '}</span> }
+                {info.content}
+              </p>
               <footer className='comment__footer'>
                 <div className="score">
-                  <button onClick={onClick} data-clicked='false' >+</button>
+                  <button onClick={handleVote} data-clicked='false' >+</button>
                   <div>{info.score}</div>
-                  <button onClick={onClick} data-clicked='false'>-</button>
+                  <button onClick={handleVote} data-clicked='false'>-</button>
                 </div>
-                <button className='reply-button'>Reply</button>
+                <button className='reply-button' onClick={handleNewReply}>Reply</button>
               </footer>
           </div>
       </article>
+      { newReply === false ? null : <NewComment />}
       <Replies
         replies={info.replies}
         voteReply={voteReply}
@@ -59,7 +70,10 @@ const Comment = ({ info, voteReply, vote }) => {
 Comment.propTypes = {
   info: PropTypes.object,
   vote: PropTypes.func,
-  voteReply: PropTypes.func
+  voteReply: PropTypes.func,
+  replyingTo: PropTypes.string,
+  addComment: PropTypes.func,
+  currentUser: PropTypes.string
 }
 
 export default Comment

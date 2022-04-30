@@ -24,4 +24,5 @@ export const updateReplyScore = (comment, replyId, action) => {
   })
 }
 
+//  Devuelve el score actualizado en el comentario indicado
 export const updateScore = (comment, action) => action === '+' ? comment.score + 1 : comment.score - 1
