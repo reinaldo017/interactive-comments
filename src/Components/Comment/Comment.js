@@ -5,7 +5,7 @@ import Replies from '../Replies/Replies'
 import NewComment from '../NewComment/NewComment'
 import { getOtherButton } from '../../helpers'
 
-const Comment = ({ info, voteReply, vote, replyingTo = null, addComment, currentUser }) => {
+const Comment = ({ info, vote, replyingTo = null, addComment, currentUser }) => {
   const [newReply, setNewReply] = useState(false)
 
   const handleNewReply = (event) => {
@@ -57,11 +57,12 @@ const Comment = ({ info, voteReply, vote, replyingTo = null, addComment, current
               </footer>
           </div>
       </article>
-      { newReply === false ? null : <NewComment />}
+      { newReply === false ? null : <NewComment currentUser={currentUser} addComment={addComment} replyingTo={replyingTo}/>}
       <Replies
         replies={info.replies}
-        voteReply={voteReply}
-        mainCommentId={info.id}
+        vote={vote}
+        addComment={addComment}
+        currentUser={currentUser}
       />
     </>
   )
@@ -70,7 +71,6 @@ const Comment = ({ info, voteReply, vote, replyingTo = null, addComment, current
 Comment.propTypes = {
   info: PropTypes.object,
   vote: PropTypes.func,
-  voteReply: PropTypes.func,
   replyingTo: PropTypes.string,
   addComment: PropTypes.func,
   currentUser: PropTypes.string

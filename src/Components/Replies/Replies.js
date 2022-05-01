@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Comment from '../Comment/Comment'
 
-const Replies = ({ replies = null, voteReply, mainCommentId }) => {
+const Replies = ({ replies = null, vote, addComment, currentUser }) => {
   if (replies === null) {
     return null
   } else {
@@ -12,7 +12,9 @@ const Replies = ({ replies = null, voteReply, mainCommentId }) => {
         key={reply.id}
         info={reply}
         replyingTo={reply.replyingTo}
-        vote={(commentId, action) => { voteReply(mainCommentId, reply.id, action) }}
+        vote={vote}
+        addComment={addComment}
+        currentUser={currentUser}
       />)
     )
   }
@@ -20,8 +22,9 @@ const Replies = ({ replies = null, voteReply, mainCommentId }) => {
 
 Replies.propTypes = {
   replies: PropTypes.array,
-  upvoteReply: PropTypes.func,
-  mainCommentId: PropTypes.number
+  vote: PropTypes.func,
+  addComment: PropTypes.func,
+  currentUser: PropTypes.string
 }
 
 export default Replies

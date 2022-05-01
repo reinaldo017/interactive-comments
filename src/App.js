@@ -3,7 +3,6 @@ import Comment from './Components/Comment/Comment'
 import NewComment from './Components/NewComment/NewComment'
 // import image from './images/avatars/image-amyrobson.png'
 import currentUserImage from './images/avatars/image-juliusomo.png'
-import { updateReplyScore, updateScore } from './helpers'
 
 const currentUser = {
   username: 'Reinaldo017',
@@ -59,33 +58,57 @@ function App () {
     }
   ])
 
-  // ***Handlers***
+  // ***Helpers***
+  //  Checks if a comment is a main comment or a reply
+  const isAMainComment = (commentId) => {
+    const mainComment = comments.find(comment => comment.id === commentId)
+    return mainComment !== undefined
+  }
+
+  // Gets the comment replied by the reply specified
+  const commentReplied = replyId => comments.find(comment => {
+    const reply = comment.replies.find(reply => reply.id === replyId)
+    return reply !== undefined
+  })
+
+  //  Calculates the new score based on the action given
+  const updateScore = (prevScore, action) => action === '+' ? prevScore + 1 : prevScore - 1
+
+  // Updates the score of the comment specified. Returns the comments array updated
+  const updateComments = (prevComments, commentId, action) => prevComments.map(comment => {
+    if (comment.id !== commentId) {
+      return comment
+    } else {
+      return {
+        ...comment,
+        score: updateScore(comment.score, action)
+      }
+    }
+  })
+
+  //  Updates the score of the specified comment
   const vote = (commentId, action) => {
-    setComments(prevComments => prevComments.map(prevComment => {
-      if (prevComment.id !== commentId) {
-        return prevComment
-      } else {
-        return {
-          ...prevComment,
-          score: updateScore(prevComment, action)
+    // If is a main comment:
+    if (isAMainComment(commentId)) {
+      setComments(prev => updateComments(prev, commentId, action))
+    } else {
+      //  If is a reply:
+      const commentRepliedId = commentReplied(commentId).id
+
+      setComments(prev => prev.map(prevComment => {
+        if (prevComment.id !== commentRepliedId) {
+          return prevComment
+        } else {
+          return {
+            ...prevComment,
+            replies: updateComments(prevComment.replies, commentId, action)
+          }
         }
-      }
-    }))
+      }))
+    }
   }
 
-  const voteReply = (mainCommentId, replyId, action) => {
-    setComments(prev => prev.map(comment => {
-      if (comment.id !== mainCommentId) {
-        return comment
-      } else {
-        return {
-          ...comment,
-          replies: updateReplyScore(comment, replyId, action)
-        }
-      }
-    }))
-  }
-
+  //  Add comment or reply
   const addComment = (comment, replyingTo) => {
     if (replyingTo === null) {
       // Add To Main Comments
@@ -113,7 +136,6 @@ function App () {
             key={comment.id}
             info={comment}
             vote={vote}
-            voteReply={voteReply}
             addComment={addComment}
             currentUser={currentUser}
           />
