@@ -8,7 +8,7 @@ import { getOtherButton } from '../../helpers'
 const Comment = ({ info, vote, replyingTo = null, addComment, currentUser }) => {
   const [newReply, setNewReply] = useState(false)
 
-  const handleNewReply = (event) => {
+  const handleNewReply = () => {
     setNewReply(prev => !prev)
   }
 
@@ -57,7 +57,7 @@ const Comment = ({ info, vote, replyingTo = null, addComment, currentUser }) => 
               </footer>
           </div>
       </article>
-      { newReply === false ? null : <NewComment currentUser={currentUser} addComment={addComment} replyingTo={replyingTo}/>}
+      { newReply === false ? null : <NewComment currentUser={currentUser} addComment={addComment} replyingTo={info}/>}
       <Replies
         replies={info.replies}
         vote={vote}
@@ -73,7 +73,7 @@ Comment.propTypes = {
   vote: PropTypes.func,
   replyingTo: PropTypes.string,
   addComment: PropTypes.func,
-  currentUser: PropTypes.string
+  currentUser: PropTypes.object
 }
 
 export default Comment

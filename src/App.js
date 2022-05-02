@@ -66,7 +66,7 @@ function App () {
   }
 
   // Gets the comment replied by the reply specified
-  const commentReplied = replyId => comments.find(comment => {
+  const getRepliedComment = replyId => comments.find(comment => {
     const reply = comment.replies.find(reply => reply.id === replyId)
     return reply !== undefined
   })
@@ -74,8 +74,8 @@ function App () {
   //  Calculates the new score based on the action given
   const updateScore = (prevScore, action) => action === '+' ? prevScore + 1 : prevScore - 1
 
-  // Updates the score of the comment specified. Returns the comments array updated
-  const updateComments = (prevComments, commentId, action) => prevComments.map(comment => {
+  // Updates the score of the comment specified. Returns the comments or replies array updated
+  const updateCommentsScores = (prevComments, commentId, action) => prevComments.map(comment => {
     if (comment.id !== commentId) {
       return comment
     } else {
@@ -90,10 +90,10 @@ function App () {
   const vote = (commentId, action) => {
     // If is a main comment:
     if (isAMainComment(commentId)) {
-      setComments(prev => updateComments(prev, commentId, action))
+      setComments(prev => updateCommentsScores(prev, commentId, action))
     } else {
       //  If is a reply:
-      const commentRepliedId = commentReplied(commentId).id
+      const commentRepliedId = getRepliedComment(commentId).id
 
       setComments(prev => prev.map(prevComment => {
         if (prevComment.id !== commentRepliedId) {
@@ -101,7 +101,7 @@ function App () {
         } else {
           return {
             ...prevComment,
-            replies: updateComments(prevComment.replies, commentId, action)
+            replies: updateCommentsScores(prevComment.replies, commentId, action)
           }
         }
       }))
@@ -109,22 +109,49 @@ function App () {
   }
 
   //  Add comment or reply
-  const addComment = (comment, replyingTo) => {
-    if (replyingTo === null) {
-      // Add To Main Comments
-      setComments(prev => [...prev, comment])
+  const addComment = (newComment, mainComment) => {
+    if (mainComment === null) {
+      setComments(prev => [...prev, newComment])
     } else {
-      //  Add to replies of specified comment
-      setComments(prev => prev.map(prevComment => {
-        if (prevComment.user.username !== replyingTo) {
-          return prevComment
-        } else {
-          return {
-            ...prevComment,
-            replies: [...prevComment.replies, comment]
+      const mainCommentIndex = comments.findIndex(comment => comment.id === mainComment.id)
+
+      if (mainCommentIndex !== -1) {
+        setComments(prev => prev.map((comment, index) => {
+          if (index === mainCommentIndex) {
+            return {
+              ...comment,
+              replies: [...comment.replies, newComment]
+            }
+          } else {
+            return comment
           }
-        }
-      }))
+        }))
+      } else {
+        comments.forEach((comment, index) => {
+          const replyIndex = comment.replies.findIndex(reply => reply.id === mainComment.id)
+          if (replyIndex !== -1) {
+            setComments(prev => prev.map((prevComment, prevIndex) => {
+              if (prevIndex === index) {
+                return {
+                  ...prevComment,
+                  replies: prevComment.replies.map((reply, i) => {
+                    if (i === replyIndex) {
+                      return {
+                        ...reply,
+                        replies: [newComment]
+                      }
+                    } else {
+                      return reply
+                    }
+                  })
+                }
+              } else {
+                return prevComment
+              }
+            }))
+          }
+        })
+      }
     }
   }
 

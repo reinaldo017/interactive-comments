@@ -24,7 +24,7 @@ Replies.propTypes = {
   replies: PropTypes.array,
   vote: PropTypes.func,
   addComment: PropTypes.func,
-  currentUser: PropTypes.string
+  currentUser: PropTypes.object
 }
 
 export default Replies

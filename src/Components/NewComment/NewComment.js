@@ -2,6 +2,7 @@ import { useState, React } from 'react'
 import PropTypes from 'prop-types'
 
 const NewComment = ({ currentUser, addComment, replyingTo = null }) => {
+  const replyingToUsername = replyingTo === null ? null : replyingTo.user.username
   //  State
   const [content, setContent] = useState('')
 
@@ -11,7 +12,8 @@ const NewComment = ({ currentUser, addComment, replyingTo = null }) => {
     content,
     createdAt: 'hoy',
     score: 0,
-    user: currentUser
+    user: currentUser,
+    replyingTo: replyingToUsername
   })
 
   // Handlers
@@ -42,8 +44,7 @@ const NewComment = ({ currentUser, addComment, replyingTo = null }) => {
 NewComment.propTypes = {
   currentUser: PropTypes.object,
   addComment: PropTypes.func,
-  replyingTo: PropTypes.string
-
+  replyingTo: PropTypes.object
 }
 
 export default NewComment
