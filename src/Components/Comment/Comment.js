@@ -5,7 +5,7 @@ import Replies from '../Replies/Replies'
 import NewComment from '../NewComment/NewComment'
 import { getOtherButton } from '../../helpers'
 
-const Comment = ({ info, vote, replyingTo = null, addComment, currentUser }) => {
+const Comment = ({ info, vote, replyingTo = null, addComment, deleteComment, currentUser }) => {
   const [newReply, setNewReply] = useState(false)
 
   const handleNewReply = () => {
@@ -34,6 +34,19 @@ const Comment = ({ info, vote, replyingTo = null, addComment, currentUser }) => 
     }
   }
 
+  const handleDelete = () => {
+    deleteComment(info.id)
+  }
+
+  const replyButton = <button className='reply-button' onClick={handleNewReply}>Reply</button>
+
+  const editSection = (
+    <section>
+      <button onClick={handleDelete}>Delete</button>
+      <button>Edit</button>
+    </section>
+  )
+
   return (
     <>
       <article className='comment'>
@@ -53,15 +66,16 @@ const Comment = ({ info, vote, replyingTo = null, addComment, currentUser }) => 
                   <div>{info.score}</div>
                   <button onClick={handleVote} data-clicked='false'>-</button>
                 </div>
-                <button className='reply-button' onClick={handleNewReply}>Reply</button>
+                {info.user.username === currentUser.username ? editSection : replyButton}
               </footer>
           </div>
       </article>
-      { newReply === false ? null : <NewComment currentUser={currentUser} addComment={addComment} replyingTo={info}/>}
+      { newReply === false ? null : <NewComment currentUser={currentUser} addComment={addComment} replyingToO={info}/>}
       <Replies
         replies={info.replies}
         vote={vote}
         addComment={addComment}
+        deleteComment={deleteComment}
         currentUser={currentUser}
       />
     </>
@@ -73,6 +87,7 @@ Comment.propTypes = {
   vote: PropTypes.func,
   replyingTo: PropTypes.string,
   addComment: PropTypes.func,
+  deleteComment: PropTypes.func,
   currentUser: PropTypes.object
 }
 

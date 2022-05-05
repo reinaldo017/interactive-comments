@@ -59,14 +59,9 @@ function App () {
   ])
 
   // ***Helpers***
-  //  Checks if a comment is a main comment or a reply
-  const isAMainComment = (commentId) => {
-    const mainComment = comments.find(comment => comment.id === commentId)
-    return mainComment !== undefined
-  }
-
   // Gets the comment replied by the reply specified
-  const getRepliedComment = replyId => comments.find(comment => {
+  const getMainComment = replyId => comments.find(comment => {
+    if (comment.replies === undefined) return false
     const reply = comment.replies.find(reply => reply.id === replyId)
     return reply !== undefined
   })
@@ -75,25 +70,69 @@ function App () {
   const updateScore = (prevScore, action) => action === '+' ? prevScore + 1 : prevScore - 1
 
   // Updates the score of the comment specified. Returns the comments or replies array updated
-  const updateCommentsScores = (prevComments, commentId, action) => prevComments.map(comment => {
-    if (comment.id !== commentId) {
-      return comment
-    } else {
+  const updateCommentsScores = (commentsArr, commentId, action) => commentsArr.map(comment => {
+    if (comment.id === commentId) {
       return {
         ...comment,
         score: updateScore(comment.score, action)
       }
+    } else {
+      return comment
     }
   })
 
+  const sortComments = commentsArr => {
+    const scores = commentsArr.map(comment => comment.score)
+
+    const sortedScores = scores.map((score, index, scoresArr) => {
+      let subArray = scoresArr.slice(index)
+      if (subArray.length === 1) subArray = [Math.min(...scores)]
+      const maxScore = Math.max(...subArray)
+      return maxScore
+    })
+
+    const sortedComments = []
+
+    sortedScores.forEach(score => {
+      const filteredComments = commentsArr.filter(comment => comment.score === score) //  Comments with the same score
+
+      filteredComments.forEach(filteredComment => {
+        const filteredCommentIsAlreadyAdded = sortedComments.some(comment => comment.id === filteredComment.id)
+
+        if (filteredCommentIsAlreadyAdded === false) {
+          sortedComments.push(filteredComment)
+        }
+      })
+    })
+
+    return sortedComments
+  }
+
+  const addToReplies = (mainComment, newReply) => {
+    setComments(prev => prev.map(prevComment => {
+      if (prevComment.id === mainComment.id) {
+        return {
+          ...prevComment,
+          replies: [...prevComment.replies, newReply]
+        }
+      } else {
+        return prevComment
+      }
+    }))
+  }
+
   //  Updates the score of the specified comment
   const vote = (commentId, action) => {
+    const isAMainComment = comments.find(comment => comment.id === commentId)
     // If is a main comment:
-    if (isAMainComment(commentId)) {
-      setComments(prev => updateCommentsScores(prev, commentId, action))
+    if (isAMainComment) {
+      setComments(prev => {
+        const updatedComments = updateCommentsScores(prev, commentId, action)
+        return sortComments(updatedComments)
+      })
     } else {
       //  If is a reply:
-      const commentRepliedId = getRepliedComment(commentId).id
+      const commentRepliedId = getMainComment(commentId).id
 
       setComments(prev => prev.map(prevComment => {
         if (prevComment.id !== commentRepliedId) {
@@ -101,57 +140,52 @@ function App () {
         } else {
           return {
             ...prevComment,
-            replies: updateCommentsScores(prevComment.replies, commentId, action)
+            replies: sortComments(updateCommentsScores(prevComment.replies, commentId, action))
           }
         }
       }))
     }
   }
 
-  //  Add comment or reply
-  const addComment = (newComment, mainComment) => {
-    if (mainComment === null) {
+  const addComment = (newComment, repliedComment) => {
+    //  If new comment isn't a reply
+    if (repliedComment === null) {
       setComments(prev => [...prev, newComment])
     } else {
-      const mainCommentIndex = comments.findIndex(comment => comment.id === mainComment.id)
-
-      if (mainCommentIndex !== -1) {
-        setComments(prev => prev.map((comment, index) => {
-          if (index === mainCommentIndex) {
-            return {
-              ...comment,
-              replies: [...comment.replies, newComment]
-            }
-          } else {
-            return comment
-          }
-        }))
+      // Search replied comment in the main comments
+      const isRepliedCommentAMainComment = comments.some(comment => comment.id === repliedComment.id)
+      //  If found:
+      if (isRepliedCommentAMainComment) {
+        addToReplies(repliedComment, newComment)
       } else {
-        comments.forEach((comment, index) => {
-          const replyIndex = comment.replies.findIndex(reply => reply.id === mainComment.id)
-          if (replyIndex !== -1) {
-            setComments(prev => prev.map((prevComment, prevIndex) => {
-              if (prevIndex === index) {
-                return {
-                  ...prevComment,
-                  replies: prevComment.replies.map((reply, i) => {
-                    if (i === replyIndex) {
-                      return {
-                        ...reply,
-                        replies: [newComment]
-                      }
-                    } else {
-                      return reply
-                    }
-                  })
-                }
-              } else {
-                return prevComment
-              }
-            }))
-          }
+        // Search replied comment in the main comments replies
+        comments.forEach(mainComment => {
+          if (mainComment.replies === undefined) return
+          const isRepliedCommentInTheReplies = mainComment.replies.some(reply => reply.id === repliedComment.id)
+          //  If found:
+          isRepliedCommentInTheReplies && addToReplies(mainComment, newComment)
         })
       }
+    }
+  }
+
+  const deleteComment = (commentId) => {
+    const mainComment = getMainComment(commentId)
+    if (mainComment === undefined) {
+      setComments(prev => prev.filter(prevComment => prevComment.id !== commentId))
+    } else {
+      const updatedReplies = mainComment.replies.filter(reply => reply.id !== commentId)
+      const updatedComment = {
+        ...mainComment,
+        replies: updatedReplies
+      }
+      setComments(prev => prev.map(prevComment => {
+        if (prevComment.id === mainComment.id) {
+          return updatedComment
+        } else {
+          return prevComment
+        }
+      }))
     }
   }
 
@@ -164,6 +198,8 @@ function App () {
             info={comment}
             vote={vote}
             addComment={addComment}
+            deleteComment={deleteComment}
+            sortComments={sortComments}
             currentUser={currentUser}
           />
         )
