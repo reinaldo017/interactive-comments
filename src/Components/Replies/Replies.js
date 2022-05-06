@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Comment from '../Comment/Comment'
 
-const Replies = ({ replies = null, vote, addComment, deleteComment, currentUser }) => {
+const Replies = ({ replies = null, vote, addComment, deleteComment, updateComment, currentUser }) => {
   if (replies === null) {
     return null
   } else {
@@ -15,6 +15,7 @@ const Replies = ({ replies = null, vote, addComment, deleteComment, currentUser 
         vote={vote}
         addComment={addComment}
         deleteComment={deleteComment}
+        updateComment={updateComment}
         currentUser={currentUser}
       />)
     )
@@ -26,6 +27,7 @@ Replies.propTypes = {
   vote: PropTypes.func,
   addComment: PropTypes.func,
   deleteComment: PropTypes.func,
+  updateComment: PropTypes.func,
   currentUser: PropTypes.object
 }
 

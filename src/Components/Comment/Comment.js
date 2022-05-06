@@ -3,10 +3,12 @@ import { useState, React } from 'react'
 import PropTypes from 'prop-types'
 import Replies from '../Replies/Replies'
 import NewComment from '../NewComment/NewComment'
+import EditComment from '../EditComment/EditComment'
 import { getOtherButton } from '../../helpers'
 
-const Comment = ({ info, vote, replyingTo = null, addComment, deleteComment, currentUser }) => {
+const Comment = ({ info, vote, replyingTo = null, addComment, deleteComment, updateComment, currentUser }) => {
   const [newReply, setNewReply] = useState(false)
+  const [editMode, setEditMode] = useState(false)
 
   const handleNewReply = () => {
     setNewReply(prev => !prev)
@@ -38,48 +40,57 @@ const Comment = ({ info, vote, replyingTo = null, addComment, deleteComment, cur
     deleteComment(info.id)
   }
 
+  const handleEdit = () => {
+    setEditMode(true)
+  }
+
   const replyButton = <button className='reply-button' onClick={handleNewReply}>Reply</button>
 
   const editSection = (
     <section>
       <button onClick={handleDelete}>Delete</button>
-      <button>Edit</button>
+      <button onClick={handleEdit}>Edit</button>
     </section>
   )
 
-  return (
-    <>
-      <article className='comment'>
-          <div className='comment__container'>
-              <header className='comment__header'>
-                  <img className='user-avatar' src={info.user.image.png} alt="user avatar"/>
-                  <h3 className='username'>{info.user.username}</h3>
-                  <p className='time'>{info.createdAt}</p>
-              </header>
-              <p className='comment__body'>
-                { replyingTo !== null && <span>{replyingTo + ' '}</span> }
-                {info.content}
-              </p>
-              <footer className='comment__footer'>
-                <div className="score">
-                  <button onClick={handleVote} data-clicked='false' >+</button>
-                  <div>{info.score}</div>
-                  <button onClick={handleVote} data-clicked='false'>-</button>
-                </div>
-                {info.user.username === currentUser.username ? editSection : replyButton}
-              </footer>
-          </div>
-      </article>
-      { newReply === false ? null : <NewComment currentUser={currentUser} addComment={addComment} replyingToO={info}/>}
-      <Replies
-        replies={info.replies}
-        vote={vote}
-        addComment={addComment}
-        deleteComment={deleteComment}
-        currentUser={currentUser}
-      />
-    </>
-  )
+  if (editMode === true) {
+    return <EditComment commentInfo={info} updateComment={updateComment} setEditMode={setEditMode}/>
+  } else {
+    return (
+      <>
+        <article className='comment'>
+            <div className='comment__container'>
+                <header className='comment__header'>
+                    <img className='user-avatar' src={info.user.image.png} alt="user avatar"/>
+                    <h3 className='username'>{info.user.username}</h3>
+                    <p className='time'>{info.createdAt}</p>
+                </header>
+                <p className='comment__body'>
+                  { replyingTo !== null && <span>{replyingTo + ' '}</span> }
+                  {info.content}
+                </p>
+                <footer className='comment__footer'>
+                  <div className="score">
+                    <button onClick={handleVote} data-clicked='false' >+</button>
+                    <div>{info.score}</div>
+                    <button onClick={handleVote} data-clicked='false'>-</button>
+                  </div>
+                  {info.user.username === currentUser.username ? editSection : replyButton}
+                </footer>
+            </div>
+        </article>
+        { newReply === false ? null : <NewComment currentUser={currentUser} addComment={addComment} replyingToObj={info}/>}
+        <Replies
+          replies={info.replies}
+          vote={vote}
+          addComment={addComment}
+          updateComment={updateComment}
+          deleteComment={deleteComment}
+          currentUser={currentUser}
+        />
+      </>
+    )
+  }
 }
 
 Comment.propTypes = {
@@ -88,6 +99,7 @@ Comment.propTypes = {
   replyingTo: PropTypes.string,
   addComment: PropTypes.func,
   deleteComment: PropTypes.func,
+  updateComment: PropTypes.func,
   currentUser: PropTypes.object
 }
 

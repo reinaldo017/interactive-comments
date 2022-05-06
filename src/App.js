@@ -6,7 +6,9 @@ import currentUserImage from './images/avatars/image-juliusomo.png'
 
 const currentUser = {
   username: 'Reinaldo017',
-  image: currentUserImage
+  image: {
+    png: currentUserImage
+  }
 }
 
 function App () {
@@ -140,7 +142,7 @@ function App () {
         } else {
           return {
             ...prevComment,
-            replies: sortComments(updateCommentsScores(prevComment.replies, commentId, action))
+            replies: updateCommentsScores(prevComment.replies, commentId, action)
           }
         }
       }))
@@ -189,6 +191,60 @@ function App () {
     }
   }
 
+  const updateComment = (commentId, newContent) => {
+    //  Let's search the comment to update
+    //  First, in the main comments
+    const isAMainComment = comments.some(comment => comment.id === commentId)
+
+    // If found:
+    if (isAMainComment) {
+      const commentToUpdate = comments.find(comment => comment.id === commentId)
+      const updatedComment = {
+        ...commentToUpdate,
+        createdAt: 'ahorita',
+        score: 0,
+        content: newContent
+      }
+
+      setComments(prev => prev.map(prevComment => {
+        if (prevComment.id === commentId) {
+          return updatedComment
+        } else {
+          return prevComment
+        }
+      }))
+    } else {
+      // If not, let's search the comment in the main comments replies
+      comments.forEach(mainComment => {
+        //  If the comment doesn't have replies skip to the next comment
+        if (mainComment.replies === undefined) return
+
+        const commentToUpdate = mainComment.replies.find(reply => reply.id === commentId)
+        //  If found;
+        if (commentToUpdate !== undefined) {
+          const updatedComment = {
+            ...commentToUpdate,
+            createdAt: 'ahorita',
+            score: 0,
+            content: newContent
+          }
+
+          setComments(prev => prev.map(prevComment => {
+            if (prevComment.id === mainComment.id) {
+              const updatedReplies = prevComment.replies.map(reply => reply.id === commentId ? updatedComment : reply)
+              return {
+                ...prevComment,
+                replies: updatedReplies
+              }
+            } else {
+              return prevComment
+            }
+          }))
+        }
+      })
+    }
+  }
+
   return (
     <div className="App">
       {comments.map(comment => {
@@ -199,6 +255,7 @@ function App () {
             vote={vote}
             addComment={addComment}
             deleteComment={deleteComment}
+            updateComment={updateComment}
             sortComments={sortComments}
             currentUser={currentUser}
           />
