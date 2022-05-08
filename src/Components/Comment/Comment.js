@@ -3,17 +3,17 @@ import { useState, React } from 'react'
 import PropTypes from 'prop-types'
 import Replies from '../Replies/Replies'
 import NewComment from '../NewComment/NewComment'
+import CurrentUserComment from '../CurrentUserComment/CurrentUserComment'
+import OtherUserComment from '../OtherUserComment/OtherUserComment'
 import EditComment from '../EditComment/EditComment'
 import { getOtherButton } from '../../helpers'
 
 const Comment = ({ info, vote, replyingTo = null, addComment, deleteComment, updateComment, currentUser }) => {
+  // States
   const [newReply, setNewReply] = useState(false)
   const [editMode, setEditMode] = useState(false)
 
-  const handleNewReply = () => {
-    setNewReply(prev => !prev)
-  }
-
+  // Handlers
   const handleVote = ({ target }) => {
     const button = target
     const otherButton = getOtherButton(button)
@@ -40,46 +40,44 @@ const Comment = ({ info, vote, replyingTo = null, addComment, deleteComment, upd
     deleteComment(info.id)
   }
 
-  const handleEdit = () => {
-    setEditMode(true)
-  }
-
-  const replyButton = <button className='reply-button' onClick={handleNewReply}>Reply</button>
-
-  const editSection = (
-    <section>
-      <button onClick={handleDelete}>Delete</button>
-      <button onClick={handleEdit}>Edit</button>
-    </section>
-  )
-
-  if (editMode === true) {
-    return <EditComment commentInfo={info} updateComment={updateComment} setEditMode={setEditMode}/>
+  //  Render
+  if (info.user.username === currentUser.username && editMode === false) {
+    return (
+      <CurrentUserComment
+        info={info}
+        onVote={handleVote}
+        onDelete={handleDelete}
+        setEditMode={setEditMode}
+        replyingTo={info.replyingTo}
+      />
+    )
+  } else if (info.user.username === currentUser.username && editMode === true) {
+    return (
+      <EditComment
+        commentInfo={info}
+        updateComment={updateComment}
+        setEditMode={setEditMode}
+      />
+    )
   } else {
     return (
       <>
-        <article className='comment'>
-            <div className='comment__container'>
-                <header className='comment__header'>
-                    <img className='user-avatar' src={info.user.image.png} alt="user avatar"/>
-                    <h3 className='username'>{info.user.username}</h3>
-                    <p className='time'>{info.createdAt}</p>
-                </header>
-                <p className='comment__body'>
-                  { replyingTo !== null && <span>{replyingTo + ' '}</span> }
-                  {info.content}
-                </p>
-                <footer className='comment__footer'>
-                  <div className="score">
-                    <button onClick={handleVote} data-clicked='false' >+</button>
-                    <div>{info.score}</div>
-                    <button onClick={handleVote} data-clicked='false'>-</button>
-                  </div>
-                  {info.user.username === currentUser.username ? editSection : replyButton}
-                </footer>
-            </div>
-        </article>
-        { newReply === false ? null : <NewComment currentUser={currentUser} addComment={addComment} replyingToObj={info}/>}
+        <OtherUserComment
+          info={info}
+          onVote={handleVote}
+          setNewReply={setNewReply}
+          replyingTo={info.replyingTo}
+        />
+
+        {newReply === true &&
+          <NewComment
+              currentUser={currentUser}
+              addComment={addComment}
+              setNewReply={setNewReply}
+              commentReplied={info}
+            />
+        }
+
         <Replies
           replies={info.replies}
           vote={vote}

@@ -60,7 +60,7 @@ function App () {
     }
   ])
 
-  // ***Helpers***
+  // Helpers
   // Gets the comment replied by the reply specified
   const getMainComment = replyId => comments.find(comment => {
     if (comment.replies === undefined) return false
@@ -245,6 +245,7 @@ function App () {
     }
   }
 
+  //  Render
   return (
     <div className="App">
       {comments.map(comment => {

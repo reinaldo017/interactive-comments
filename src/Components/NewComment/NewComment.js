@@ -1,7 +1,7 @@
 import { useState, React } from 'react'
 import PropTypes from 'prop-types'
 
-const NewComment = ({ currentUser, addComment, replyingToObj = null }) => {
+const NewComment = ({ currentUser, addComment, setNewReply, commentReplied = null }) => {
   //  State
   const [content, setContent] = useState('')
 
@@ -12,7 +12,7 @@ const NewComment = ({ currentUser, addComment, replyingToObj = null }) => {
     createdAt: 'hoy',
     score: 0,
     user: currentUser,
-    replyingTo: replyingToObj === null ? null : replyingToObj.user.username
+    replyingTo: commentReplied === null ? null : commentReplied.user.username
   })
 
   // Handlers
@@ -22,9 +22,15 @@ const NewComment = ({ currentUser, addComment, replyingToObj = null }) => {
 
   const handleSubmit = event => {
     event.preventDefault()
+
     const newComment = createComment()
-    addComment(newComment, replyingToObj)
+    addComment(newComment, commentReplied)
+
     setContent('')
+
+    if (commentReplied !== null) {
+      setNewReply(false)
+    }
   }
 
   return (
@@ -43,7 +49,8 @@ const NewComment = ({ currentUser, addComment, replyingToObj = null }) => {
 NewComment.propTypes = {
   currentUser: PropTypes.object,
   addComment: PropTypes.func,
-  replyingToObj: PropTypes.object
+  setNewReply: PropTypes.func,
+  commentReplied: PropTypes.object
 }
 
 export default NewComment
