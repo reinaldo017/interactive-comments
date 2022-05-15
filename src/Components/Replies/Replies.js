@@ -7,17 +7,20 @@ const Replies = ({ replies = null, vote, addComment, deleteComment, updateCommen
     return null
   } else {
     return (
-      replies.map(reply =>
-      <Comment
-        key={reply.id}
-        info={reply}
-        replyingTo={reply.replyingTo}
-        vote={vote}
-        addComment={addComment}
-        deleteComment={deleteComment}
-        updateComment={updateComment}
-        currentUser={currentUser}
-      />)
+      <div className='replies'>
+        {replies.map(reply =>
+        <Comment
+          key={reply.id}
+          info={reply}
+          replyingTo={reply.replyingTo}
+          vote={vote}
+          addComment={addComment}
+          deleteComment={deleteComment}
+          updateComment={updateComment}
+          currentUser={currentUser}
+        />
+        )}
+      </div>
     )
   }
 }

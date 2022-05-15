@@ -1,0 +1,198 @@
+/*Variables*/
+:root {
+/*Colors*/
+/*Primary*/
+--moderate-blue: hsl(238, 40%, 52%);
+--soft-red: hsl(358, 79%, 66%);
+--light-grayish-blue: hsl(239, 57%, 85%);
+--pale-red: hsl(357, 100%, 86%);
+
+/*Neutral*/
+--dark-blue: hsl(212, 24%, 26%);
+--grayish-blue: hsl(211, 10%, 45%);
+--light-gray: hsl(223, 19%, 93%);
+--very-light-gray: hsl(228, 33%, 97%);
+--white: hsl(0, 0%, 100%);
+
+/*Font*/
+--font-family: 'Rubik', sans-serif;
+
+/*Font-sizes*/
+--font-size-sm: clamp(0.8rem, 0.13vw + 0.77rem, 0.89rem);
+--font-size-base: clamp(1rem, 0.27vw + 0.95rem, 1.19rem);
+--font-size-md: clamp(1.25rem, 0.48vw + 1.15rem, 1.58rem);
+--font-size-lg: clamp(1.56rem, 0.78vw + 1.41rem, 2.11rem);
+--font-size-xl: clamp(1.95rem, 1.23vw + 1.71rem, 2.81rem);
+--font-size-xxl: clamp(2.44rem, 1.87vw + 2.07rem, 3.75rem);
+--font-size-xxxl: clamp(3.05rem, 2.78vw + 2.5rem, 5rem);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+body {
+    display: flow-root;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background-color: var(--very-light-gray);
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+}
+
+.App {
+    display: flow-root;
+    margin: 2rem 1rem;
+}
+
+/*Comment*/
+.comment {
+    padding: 1rem;
+    border-radius: 0.5em;
+    margin-bottom: 1rem;
+    background-color: var(--white);
+}
+
+/*Comment header*/
+.comment__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: max(238px, 80%);
+}
+
+.user-avatar {
+    width: 2rem;
+}
+
+.comment__you-icon {
+    padding: 0.25em 0.5em;
+    border: 1px solid black;
+    border-radius: 0.25em;
+    color: var(--white);
+    background-color: var(--moderate-blue);
+    font-size: var(--font-size-sm);
+}
+
+/*Comment body*/
+.comment__body {
+    margin: 1.31rem auto;
+    line-height: 1.5;
+    color: var(--grayish-blue);
+}
+
+.comment__body span {
+    color: var(--moderate-blue);
+    font-weight: bold;
+}
+
+/*Comment footer*/
+.comment__footer {
+    display: flex;
+    justify-content: space-between;
+}
+
+.score {
+    display: flex;
+    align-items: center;
+    border-radius: 0.75em;
+    font-weight: bold;
+    background-color: var(--light-gray);
+}
+
+.score p {
+    padding: 0 0.5em;
+    color: var(--dark-blue);
+}
+
+
+.score button {
+    border: 0;
+    padding: 0.5em 0.75em;
+    border-radius: 0.5em;
+    font-size: var(--font-size-md);
+    color: var(--light-grayish-blue);
+}
+
+.score button:active {
+    color: var(--moderate-blue);
+}
+
+/*Reply button*/
+.reply-button {
+    border: 0px;
+    padding: 0;
+    background-color: transparent;
+    color: var(--moderate-blue);
+    font-size: var(--font-size-base);
+    font-weight: bold;
+}
+
+.reply-button::before {
+    content: url('../public/images/icon-reply.svg');
+    padding-right: 0.56em; 
+}
+
+/*New comment*/
+.new-comment {
+    border: 1px solid green;
+    border-radius: 0.5em;
+    margin-bottom: 1rem;
+    background-color: var(--pale-red);
+}
+
+.new-comment__container {
+    margin: 0 1em 1em;
+    border-radius: 0.5em;
+}
+
+.input {
+    width: 100%;
+    padding: 1em 1em;
+    margin: 1.31rem auto;
+    border-radius: 0.5rem;
+    outline: var(--moderate-blue);
+    color: var(--grayish-blue);
+    font-size: var(--font-size-base);
+    font-family: 'Rubik', sans-serif;
+    line-height: 1.5;
+}
+
+.new-comment__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/*Replies*/
+.replies {
+    border-left: 2px solid var(--light-gray);
+    padding-left: 1rem;
+}
+
+/*Utility classes*/
+.flex-end {
+    justify-content: flex-end;
+}
+
+.blue-button {
+    border: 0;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background-color: var(--moderate-blue);
+    color: var(--white);
+    font-weight: 500;
+}
+
+.you::after {
+    content: 'you';
+    padding: 0.25em 0.5em;
+    margin-left: 0.5em;
+    border: 1px solid black;
+    border-radius: 0.25em;
+    color: var(--white);
+    background-color: var(--moderate-blue);
+    font-size: var(--font-size-sm);
+}

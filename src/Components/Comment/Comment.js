@@ -1,4 +1,3 @@
-import './comment.css'
 import { useState, React } from 'react'
 import PropTypes from 'prop-types'
 import Replies from '../Replies/Replies'
@@ -43,13 +42,24 @@ const Comment = ({ info, vote, replyingTo = null, addComment, deleteComment, upd
   //  Render
   if (info.user.username === currentUser.username && editMode === false) {
     return (
-      <CurrentUserComment
-        info={info}
-        onVote={handleVote}
-        onDelete={handleDelete}
-        setEditMode={setEditMode}
-        replyingTo={info.replyingTo}
-      />
+      <>
+        <CurrentUserComment
+          info={info}
+          onVote={handleVote}
+          onDelete={handleDelete}
+          setEditMode={setEditMode}
+          replyingTo={info.replyingTo}
+        />
+
+        <Replies
+          replies={info.replies}
+          vote={vote}
+          addComment={addComment}
+          updateComment={updateComment}
+          deleteComment={deleteComment}
+          currentUser={currentUser}
+        />
+      </>
     )
   } else if (info.user.username === currentUser.username && editMode === true) {
     return (

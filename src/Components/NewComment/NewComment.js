@@ -34,12 +34,12 @@ const NewComment = ({ currentUser, addComment, setNewReply, commentReplied = nul
   }
 
   return (
-        <div className='newComment'>
-            <form className='newComment__container' onSubmit={handleSubmit}>
-                <input className='inputfield' placeholder='Add a comment...' value={content} onChange={handleChange}/>
-                <div className='newComment__footer'>
-                    <img src={currentUser.image} alt='user avatar'/>
-                    <button>SEND</button>
+        <div className='new-comment'>
+            <form className='new-comment__container' onSubmit={handleSubmit}>
+                <textarea className='input' placeholder='Add a comment...' value={content} onChange={handleChange}/>
+                <div className='new-comment__footer'>
+                    <img className='user-avatar' src={currentUser.image.png} alt='user avatar'/>
+                    <button className='blue-button'> SEND</button>
                 </div>
             </form>
         </div>

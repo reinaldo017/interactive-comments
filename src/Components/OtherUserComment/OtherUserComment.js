@@ -8,26 +8,24 @@ const OtherUserComment = ({ info, onVote, setNewReply, replyingTo = null }) => {
   }
 
   return (
-    <article className='comment'>
-        <div className='comment__container'>
-            <header className='comment__header'>
-                <img className='user-avatar' src={info.user.image.png} alt="user avatar"/>
-                <h3 className='username'>{info.user.username}</h3>
-                <p className='time'>{info.createdAt}</p>
-            </header>
-            <p className='comment__body'>
-                { replyingTo !== null && <span>{replyingTo + ' '}</span> }
-                {info.content}
-            </p>
-            <footer className='comment__footer'>
-                <div className="score">
-                <button onClick={onVote} data-clicked='false' >+</button>
-                <div>{info.score}</div>
-                <button onClick={onVote} data-clicked='false'>-</button>
-                </div>
-                <button className='reply-button' onClick={toggleReply}>Reply</button>
-            </footer>
-        </div>
+    <article className={replyingTo === null ? 'comment' : 'comment reply' }>
+      <header className='comment__header'>
+          <img className='user-avatar' src={info.user.image.png} alt="user avatar"/>
+          <h4 className='username'>{info.user.username}</h4>
+          <p className='time'>{info.createdAt}</p>
+      </header>
+      <p className='comment__body'>
+          { replyingTo !== null && <span>{'@' + replyingTo + ' '}</span> }
+          {info.content}
+      </p>
+      <footer className='comment__footer'>
+          <div className="score">
+            <button onClick={onVote} data-clicked='false'>+</button>
+            <p>{info.score}</p>
+            <button onClick={onVote} data-clicked='false'>-</button>
+          </div>
+          <button className='reply-button' onClick={toggleReply}>Reply</button>
+      </footer>
     </article>
   )
 }

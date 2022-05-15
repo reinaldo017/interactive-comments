@@ -1,0 +1,40 @@
+/*Buttons container*/
+.comment__buttons {
+    display: flex;
+}
+
+/*Edit button*/
+.comment__edit-button {
+    border: 0px;
+    padding: 0;
+    background-color: transparent;
+    color: var(--moderate-blue);
+    font-size: var(--font-size-base);
+    font-weight: bold;
+}
+
+.comment__edit-button::before {
+    content: url('../../../public/images/icon-edit.svg');
+    padding-right: 0.56em; 
+}
+
+.comment__edit-button:active {
+    color: var(--light-grayish-blue);
+    fill: var(--light-grayish-blue);
+}
+
+/*Delete button*/
+.comment__delete-button {
+    border: 0px;
+    padding: 0;
+    margin-right: 1em;
+    background-color: transparent;
+    color: var(--soft-red);
+    font-size: var(--font-size-base);
+    font-weight: bold;
+}
+
+.comment__delete-button::before {
+    content: url('../../../public/images/icon-delete.svg');
+    padding-right: 0.56em; 
+}

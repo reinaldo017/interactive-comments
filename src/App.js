@@ -1,18 +1,17 @@
 import { useState, React } from 'react'
 import Comment from './Components/Comment/Comment'
 import NewComment from './Components/NewComment/NewComment'
-// import image from './images/avatars/image-amyrobson.png'
-import currentUserImage from './images/avatars/image-juliusomo.png'
 
 const currentUser = {
-  username: 'Reinaldo017',
   image: {
-    png: currentUserImage
-  }
+    png: './images/avatars/image-juliusomo.png',
+    webp: './images/avatars/image-juliusomo.webp'
+  },
+  username: 'juliusomo'
 }
 
 function App () {
-  //  ***States**
+  //  States
   //   Coments to render
   const [comments, setComments] = useState([
     {
@@ -68,10 +67,8 @@ function App () {
     return reply !== undefined
   })
 
-  //  Calculates the new score based on the action given
   const updateScore = (prevScore, action) => action === '+' ? prevScore + 1 : prevScore - 1
 
-  // Updates the score of the comment specified. Returns the comments or replies array updated
   const updateCommentsScores = (commentsArr, commentId, action) => commentsArr.map(comment => {
     if (comment.id === commentId) {
       return {
@@ -123,7 +120,6 @@ function App () {
     }))
   }
 
-  //  Updates the score of the specified comment
   const vote = (commentId, action) => {
     const isAMainComment = comments.find(comment => comment.id === commentId)
     // If is a main comment:
@@ -257,7 +253,6 @@ function App () {
             addComment={addComment}
             deleteComment={deleteComment}
             updateComment={updateComment}
-            sortComments={sortComments}
             currentUser={currentUser}
           />
         )
