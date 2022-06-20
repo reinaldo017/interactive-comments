@@ -1,0 +1,29 @@
+/*Reply button*/
+.reply-button {
+    grid-area: buttons;
+    justify-self: end;
+    border: 0px;
+    padding: 0;
+    background-color: transparent;
+    color: var(--moderate-blue);
+    fill: var(--moderate-blue);
+    font-size: var(--font-size-base);
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.reply-button svg {
+    margin-right: 0.5rem;
+}
+
+.reply-button:active {
+    color: var(--light-grayish-blue);
+    fill: var(--light-grayish-blue);
+}
+
+/*Mid size screens*/
+@media screen and (min-width: 667px) {
+    .reply-button {
+        grid-area: buttons;
+    }
+}

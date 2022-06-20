@@ -1,19 +1,28 @@
+import './newComment.css'
 import { useState, React } from 'react'
 import PropTypes from 'prop-types'
 
-const NewComment = ({ currentUser, addComment, setNewReply, commentReplied = null }) => {
+const NewComment = ({ currentUser, repliedComment, add, toggleReply }) => {
   //  State
   const [content, setContent] = useState('')
 
   // Helpers
-  const createComment = () => ({
-    id: Math.floor(Math.random() * 1000),
-    content,
-    createdAt: 'hoy',
-    score: 0,
-    user: currentUser,
-    replyingTo: commentReplied === null ? null : commentReplied.user.username
-  })
+  const createComment = () => {
+    if (repliedComment === undefined) {
+      return ({
+        content,
+        score: 0,
+        user: currentUser
+      })
+    } else {
+      return ({
+        content,
+        score: 0,
+        user: currentUser,
+        replyingTo: repliedComment.user.username
+      })
+    }
+  }
 
   // Handlers
   const handleChange = ({ target }) => {
@@ -22,35 +31,35 @@ const NewComment = ({ currentUser, addComment, setNewReply, commentReplied = nul
 
   const handleSubmit = event => {
     event.preventDefault()
-
     const newComment = createComment()
-    addComment(newComment, commentReplied)
+
+    if (repliedComment === undefined) {
+      add(newComment)
+    } else {
+      add(newComment, repliedComment.id)
+    }
 
     setContent('')
 
-    if (commentReplied !== null) {
-      setNewReply(false)
+    if (repliedComment !== undefined) {
+      toggleReply()
     }
   }
 
   return (
-        <div className='new-comment'>
-            <form className='new-comment__container' onSubmit={handleSubmit}>
-                <textarea className='input' placeholder='Add a comment...' value={content} onChange={handleChange}/>
-                <div className='new-comment__footer'>
-                    <img className='user-avatar' src={currentUser.image.png} alt='user avatar'/>
-                    <button className='blue-button'> SEND</button>
-                </div>
-            </form>
-        </div>
+    <form className='new-comment' onSubmit={handleSubmit} >
+        <textarea className='new-comment__input' placeholder='Add a comment...' value={content} onChange={handleChange}/>
+        <img className='user-avatar' src={currentUser.image.png} alt='user avatar'/>
+        <button className='blue-button'> {repliedComment === undefined ? 'SEND' : 'REPLY'}</button>
+    </form>
   )
 }
 
 NewComment.propTypes = {
   currentUser: PropTypes.object,
-  addComment: PropTypes.func,
-  setNewReply: PropTypes.func,
-  commentReplied: PropTypes.object
+  repliedComment: PropTypes.object,
+  add: PropTypes.func,
+  toggleReply: PropTypes.func
 }
 
 export default NewComment

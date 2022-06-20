@@ -5,38 +5,19 @@ import NewComment from '../NewComment/NewComment'
 import CurrentUserComment from '../CurrentUserComment/CurrentUserComment'
 import OtherUserComment from '../OtherUserComment/OtherUserComment'
 import EditComment from '../EditComment/EditComment'
-import { getOtherButton } from '../../helpers'
 
-const Comment = ({ info, vote, replyingTo = null, addComment, deleteComment, updateComment, currentUser }) => {
+const Comment = ({ info, add, remove, update, vote, currentUser }) => {
   // States
   const [newReply, setNewReply] = useState(false)
   const [editMode, setEditMode] = useState(false)
 
-  // Handlers
-  const handleVote = ({ target }) => {
-    const button = target
-    const otherButton = getOtherButton(button)
-
-    // Si ningún botón ha sido clickeado
-    if (button.dataset.clicked === 'false' && otherButton.dataset.clicked === 'false') {
-      vote(info.id, button.innerText)
-      button.dataset.clicked = 'true'
-    } else if (button.dataset.clicked === 'true' && otherButton.dataset.clicked === 'false') {
-      //  Si se clickea un botón antes clickeado
-      const action = target.innerText === '+' ? '-' : '+'
-      vote(info.id, action)
-      button.dataset.clicked = 'false'
-    } else if (button.dataset.clicked === 'false' && otherButton.dataset.clicked === 'true') {
-      // Si el otro botón ha sido clickeado antes
-      vote(info.id, button.innerText)
-      vote(info.id, button.innerText)
-      button.dataset.clicked = 'true'
-      otherButton.dataset.clicked = 'false'
-    }
+  //  Helpers
+  const toggleEditMode = () => {
+    setEditMode(prev => !prev)
   }
 
-  const handleDelete = () => {
-    deleteComment(info.id)
+  const toggleReply = () => {
+    setNewReply(prev => !prev)
   }
 
   //  Render
@@ -45,28 +26,28 @@ const Comment = ({ info, vote, replyingTo = null, addComment, deleteComment, upd
       <>
         <CurrentUserComment
           info={info}
-          onVote={handleVote}
-          onDelete={handleDelete}
-          setEditMode={setEditMode}
-          replyingTo={info.replyingTo}
+          vote={vote}
+          remove={remove}
+          toggleEditMode={toggleEditMode}
         />
 
         <Replies
           replies={info.replies}
-          vote={vote}
-          addComment={addComment}
-          updateComment={updateComment}
-          deleteComment={deleteComment}
           currentUser={currentUser}
+          vote={vote}
+          add={add}
+          update={update}
+          remove={remove}
         />
       </>
     )
   } else if (info.user.username === currentUser.username && editMode === true) {
     return (
       <EditComment
-        commentInfo={info}
-        updateComment={updateComment}
-        setEditMode={setEditMode}
+        info={info}
+        update={update}
+        vote={vote}
+        toggleEditMode={toggleEditMode}
       />
     )
   } else {
@@ -74,27 +55,27 @@ const Comment = ({ info, vote, replyingTo = null, addComment, deleteComment, upd
       <>
         <OtherUserComment
           info={info}
-          onVote={handleVote}
-          setNewReply={setNewReply}
           replyingTo={info.replyingTo}
+          vote={vote}
+          toggleReply={toggleReply}
         />
 
         {newReply === true &&
           <NewComment
-              currentUser={currentUser}
-              addComment={addComment}
-              setNewReply={setNewReply}
-              commentReplied={info}
-            />
+            currentUser={currentUser}
+            repliedComment={info}
+            add={add}
+            toggleReply={toggleReply}
+          />
         }
 
         <Replies
           replies={info.replies}
-          vote={vote}
-          addComment={addComment}
-          updateComment={updateComment}
-          deleteComment={deleteComment}
           currentUser={currentUser}
+          vote={vote}
+          add={add}
+          update={update}
+          remove={remove}
         />
       </>
     )
@@ -103,11 +84,11 @@ const Comment = ({ info, vote, replyingTo = null, addComment, deleteComment, upd
 
 Comment.propTypes = {
   info: PropTypes.object,
-  vote: PropTypes.func,
   replyingTo: PropTypes.string,
-  addComment: PropTypes.func,
-  deleteComment: PropTypes.func,
-  updateComment: PropTypes.func,
+  add: PropTypes.func,
+  remove: PropTypes.func,
+  update: PropTypes.func,
+  vote: PropTypes.func,
   currentUser: PropTypes.object
 }
 

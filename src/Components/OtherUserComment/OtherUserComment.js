@@ -1,31 +1,26 @@
+import './otherUserComment.css'
 import React from 'react'
 import PropTypes from 'prop-types'
+import Score from '../Score/Score'
+import { ReactComponent as ReplyIcon } from './icon-reply.svg'
 
-const OtherUserComment = ({ info, onVote, setNewReply, replyingTo = null }) => {
-  //  Handlers
-  const toggleReply = () => {
-    setNewReply(prev => !prev)
-  }
-
+const OtherUserComment = ({ info, replyingTo, vote, toggleReply }) => {
   return (
-    <article className={replyingTo === null ? 'comment' : 'comment reply' }>
+    <article className='comment'>
       <header className='comment__header'>
           <img className='user-avatar' src={info.user.image.png} alt="user avatar"/>
-          <h4 className='username'>{info.user.username}</h4>
+          <h4 className='comment__username'>{info.user.username}</h4>
           <p className='time'>{info.createdAt}</p>
       </header>
       <p className='comment__body'>
-          { replyingTo !== null && <span>{'@' + replyingTo + ' '}</span> }
+          { replyingTo !== undefined && <span>{'@' + replyingTo + ' '}</span> }
           {info.content}
       </p>
-      <footer className='comment__footer'>
-          <div className="score">
-            <button onClick={onVote} data-clicked='false'>+</button>
-            <p>{info.score}</p>
-            <button onClick={onVote} data-clicked='false'>-</button>
-          </div>
-          <button className='reply-button' onClick={toggleReply}>Reply</button>
-      </footer>
+      <Score value={info.score} commentId={info.id} vote={vote}/>
+      <button className='reply-button' onClick={toggleReply}>
+        <ReplyIcon />
+        Reply
+      </button>
     </article>
   )
 }
@@ -35,6 +30,6 @@ export default OtherUserComment
 OtherUserComment.propTypes = {
   info: PropTypes.object,
   replyingTo: PropTypes.string,
-  onVote: PropTypes.func,
-  setNewReply: PropTypes.func
+  vote: PropTypes.func,
+  toggleReply: PropTypes.func
 }

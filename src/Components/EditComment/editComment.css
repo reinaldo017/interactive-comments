@@ -1,0 +1,37 @@
+.edit-comment {
+    display: grid;
+    width: 100%;
+    padding: 1em;
+    border-radius: 0.5em;
+    margin-bottom: 1rem;
+    background-color: var(--white);
+    grid-template-columns: min-content repeat(2, 1fr);
+    grid-template-areas:
+        "header header header"
+        "text text text"
+        "score . buttons";
+}
+
+.input {
+    grid-area: text;
+    width: 100%;
+    padding: 1em 1em;
+    margin: 1em auto 1.31rem;
+    border: 1px solid var(--light-grayish-blue);
+    border-radius: 0.5rem;
+    outline: var(--moderate-blue);
+    color: var(--grayish-blue);
+    font-size: var(--font-size-base);
+    font-family: 'Rubik', sans-serif;
+    line-height: 1.5;
+    resize: none;
+}
+
+@media screen and (min-width: 600px) {
+    .edit-comment {
+        grid-template-areas: 
+            "score header header header"
+            "score text text text"
+            ". . . buttons";
+    }
+}

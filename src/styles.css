@@ -25,11 +25,16 @@
 --font-size-xl: clamp(1.95rem, 1.23vw + 1.71rem, 2.81rem);
 --font-size-xxl: clamp(2.44rem, 1.87vw + 2.07rem, 3.75rem);
 --font-size-xxxl: clamp(3.05rem, 2.78vw + 2.5rem, 5rem);
+
+/*Screen sizes*/
+--screen-size-md: 667px;
 }
 
 * {
     box-sizing: border-box;
     margin: 0;
+    padding: 0;
+    border: 0;
 }
 
 body {
@@ -42,43 +47,58 @@ body {
     font-size: var(--font-size-base);
 }
 
-.App {
-    display: flow-root;
+#root {
     margin: 2rem 1rem;
+}
+
+.App {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: min(100%, 45.63rem); 
+    margin: 0 auto;
 }
 
 /*Comment*/
 .comment {
-    padding: 1rem;
+    display: grid;
+    width: 100%;
+    padding: 1em;
     border-radius: 0.5em;
     margin-bottom: 1rem;
     background-color: var(--white);
+    grid-template-columns: min-content repeat(2, 1fr);
+    grid-template-areas: 
+        "header header header"
+        "text text text"
+        "score . buttons";
 }
 
 /*Comment header*/
 .comment__header {
+    grid-area: header;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
-    width: max(238px, 80%);
+    width: clamp(250px, 80%);
 }
 
 .user-avatar {
     width: 2rem;
 }
 
-.comment__you-icon {
-    padding: 0.25em 0.5em;
-    border: 1px solid black;
-    border-radius: 0.25em;
-    color: var(--white);
-    background-color: var(--moderate-blue);
-    font-size: var(--font-size-sm);
+.comment__username {
+    margin: 0 1em;
+}
+
+.time {
+    text-align: center;
 }
 
 /*Comment body*/
 .comment__body {
-    margin: 1.31rem auto;
+    grid-area: text;
+    margin: 1.31rem 0;
     line-height: 1.5;
     color: var(--grayish-blue);
 }
@@ -88,13 +108,10 @@ body {
     font-weight: bold;
 }
 
-/*Comment footer*/
-.comment__footer {
-    display: flex;
-    justify-content: space-between;
-}
-
+/*Score*/
 .score {
+    grid-area: score;
+    align-self: start;
     display: flex;
     align-items: center;
     border-radius: 0.75em;
@@ -120,52 +137,6 @@ body {
     color: var(--moderate-blue);
 }
 
-/*Reply button*/
-.reply-button {
-    border: 0px;
-    padding: 0;
-    background-color: transparent;
-    color: var(--moderate-blue);
-    font-size: var(--font-size-base);
-    font-weight: bold;
-}
-
-.reply-button::before {
-    content: url('../public/images/icon-reply.svg');
-    padding-right: 0.56em; 
-}
-
-/*New comment*/
-.new-comment {
-    border: 1px solid green;
-    border-radius: 0.5em;
-    margin-bottom: 1rem;
-    background-color: var(--pale-red);
-}
-
-.new-comment__container {
-    margin: 0 1em 1em;
-    border-radius: 0.5em;
-}
-
-.input {
-    width: 100%;
-    padding: 1em 1em;
-    margin: 1.31rem auto;
-    border-radius: 0.5rem;
-    outline: var(--moderate-blue);
-    color: var(--grayish-blue);
-    font-size: var(--font-size-base);
-    font-family: 'Rubik', sans-serif;
-    line-height: 1.5;
-}
-
-.new-comment__footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
 /*Replies*/
 .replies {
     border-left: 2px solid var(--light-gray);
@@ -178,12 +149,20 @@ body {
 }
 
 .blue-button {
+    grid-area: buttons;
+    justify-self: end;
+    width: 6.5em;
     border: 0;
     border-radius: 0.5rem;
-    padding: 0.75rem 1.25rem;
+    padding: 0.75em 1.25em;
     background-color: var(--moderate-blue);
     color: var(--white);
     font-weight: 500;
+    cursor: pointer;
+}
+
+.blue-button:active {
+    background-color: var(--light-grayish-blue);
 }
 
 .you::after {
@@ -195,4 +174,28 @@ body {
     color: var(--white);
     background-color: var(--moderate-blue);
     font-size: var(--font-size-sm);
+}
+
+/*Mid size screens*/
+@media screen and (min-width: 600px) {
+    .comment {
+        display: grid;
+        justify-items: start;
+        grid-template-columns: min-content repeat(3, 1fr);
+        grid-template-areas:
+           "score header header buttons"
+           "score text text text"
+           ". text text text";
+    }
+
+    .score {
+        flex-direction: column;
+        margin-right: 1rem;
+        max-width: 2.88rem;
+    }
+
+    .score button {
+        max-width: 100%;
+        text-align: center;
+    }
 }
